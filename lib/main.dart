@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:personal_expenses/widgets/chart.dart';
 import 'package:personal_expenses/widgets/new_transaction.dart';
 import 'package:personal_expenses/widgets/transaction_list.dart';
 
@@ -17,22 +18,19 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Personal Expenses',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: 'Roboto',
-        textTheme: ThemeData.light().textTheme.copyWith(
-              headline6: const TextStyle(
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.bold,
+          primarySwatch: Colors.blue,
+          fontFamily: 'Roboto',
+          textTheme: ThemeData.light().textTheme.copyWith(
+                headline6: const TextStyle(
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
           appBarTheme: const AppBarTheme(
               titleTextStyle: TextStyle(
                   fontFamily: 'OpenSans',
                   fontSize: 20,
-                  fontWeight: FontWeight.bold
-              )
-          )
-      ),
+                  fontWeight: FontWeight.bold))),
       home: MyHomePage(),
     );
   }
@@ -85,6 +83,16 @@ class _MyHomePageState extends State<MyHomePage> {
     ),
   ];
 
+  List<Transaction> get _recentTransactions {
+    return _userTransactions.where((element) {
+      return element.date.isAfter(
+        DateTime.now().subtract(
+          const Duration(days: 7),
+        ),
+      );
+    }).toList();
+  }
+
   void _addNewTransaction(String title, double amount) {
     final newTx = Transaction(
       id: DateTime.now().toString(),
@@ -133,14 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            const SizedBox(
-              width: double.infinity,
-              child: Card(
-                child: Text('CHART!'),
-                color: Colors.blue,
-                elevation: 5,
-              ),
-            ),
+            Chart(recentTransactions: _recentTransactions),
             TransactionList(
               transactions: _userTransactions,
             ),
